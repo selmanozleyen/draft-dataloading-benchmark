@@ -1,0 +1,33 @@
+{
+    "benchmarks.TimeSuite.time_dataloader": {
+        "code": "class TimeSuite:\n    def time_dataloader(self):\n        adata = read_lazy(self.path)\n        ds = ZarrDataset(adata, \"cell_type\")\n        for x in ds:\n            pass\n\n    def setup(self):\n        # keep only the path around\n        self.path = DATA_PATH",
+        "min_run_count": 2,
+        "name": "benchmarks.TimeSuite.time_dataloader",
+        "number": 0,
+        "param_names": [],
+        "params": [],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "2227547b0ac8b6ce23588e7268d94d25821432804689de9ffa9c17d53f77ad65",
+        "warmup_time": -1
+    },
+    "benchmarks.TimeSuite.time_dataloader_torch": {
+        "code": "class TimeSuite:\n    def time_dataloader_torch(self):\n        adata = read_lazy(self.path)\n        ds = ZarrDataset(adata, \"cell_type\")\n        loader = DataLoader(\n            ds,\n            batch_size=128,\n            num_workers=4,\n            persistent_workers=True,\n            pin_memory=False\n        )\n        for x in loader:\n            pass\n\n    def setup(self):\n        # keep only the path around\n        self.path = DATA_PATH",
+        "min_run_count": 2,
+        "name": "benchmarks.TimeSuite.time_dataloader_torch",
+        "number": 0,
+        "param_names": [],
+        "params": [],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "fd150957bbb5ee5326a9ddaa1ef0c2dab46b8259555dfed3b792b4d7f02d5e26",
+        "warmup_time": -1
+    },
+    "version": 2
+}

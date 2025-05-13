@@ -1,0 +1,10 @@
+benchmarks/data/*
+# cache
+
+**/.DS_Store
+**/.mypy_cache
+**/.pytest_cache
+**/.ruff_cache
+**/.venv
+**/.vscode
+**/__pycache__/**
