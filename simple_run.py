@@ -39,10 +39,25 @@ if __name__ == "__main__":
         time0 = time.time()
     # give in plus and minus
     avg_batch_size = sum(batch_sizes)/(len(batch_sizes) * 1.0)
-    print(f"Average batch size: {avg_batch_size}")
-    print(f"Average batch time: {sum(batch_times)/len(batch_times)} seconds (+/- {np.std(batch_times)} seconds)")
-    print(f"Total time: {sum(batch_times)} seconds")
-    print(f"Number of samples: {sum(batch_sizes)}")
-    print(f"Number of iterations: {len(batch_times)}")
-    print(f"Average time per element: {sum(batch_times)/(len(batch_times) * avg_batch_size)} seconds")
-    print(f"Samples per second: {sum(batch_sizes)/sum(batch_times)}")
+    # Format timing results with proper units and alignment
+    total_time = sum(batch_times)
+    total_samples = sum(batch_sizes)
+    avg_time_per_element = sum(batch_times)/(len(batch_times) * avg_batch_size)
+    samples_per_second = total_samples/total_time
+
+    # Convert to appropriate units
+    def format_time(t):
+        if t < 0.001:  # less than 1ms
+            return f"{t*1e6:8.2f} μs"
+        elif t < 1:    # less than 1s
+            return f"{t*1e3:8.2f} ms"
+        else:
+            return f"{t:8.2f} s"
+
+    print("\n--------------------------------[Timing Results]--------------------------------")
+    print(f"Total time:          {format_time(total_time)}")
+    print(f"Total samples:       {total_samples:8,d}")
+    print(f"Number of batches:   {len(batch_times):8,d}")
+    print(f"Avg time/element:    {format_time(avg_time_per_element)}")
+    print(f"Throughput:          {samples_per_second:8,.1f} samples/s")
+    print("--------------------------------------------------------------------------------")
