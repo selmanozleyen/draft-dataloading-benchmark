@@ -41,6 +41,7 @@ if __name__ == "__main__":
     avg_batch_size = sum(batch_sizes)/(len(batch_sizes) * 1.0)
     print(f"Average batch size: {avg_batch_size}")
     print(f"Average batch time: {sum(batch_times)/len(batch_times)} seconds (+/- {np.std(batch_times)} seconds)")
-    print(f"Average time per element: {sum(batch_times)/(len(batch_times) * avg_batch_size)} seconds")
     print(f"Total time: {sum(batch_times)} seconds")
+    print(f"Number of samples: {sum(batch_sizes)}")
     print(f"Number of iterations: {len(batch_times)}")
+    print(f"Average time per element: {sum(batch_times)/(len(batch_times) * avg_batch_size)} seconds")
