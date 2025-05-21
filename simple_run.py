@@ -40,10 +40,10 @@ if __name__ == "__main__":
     # give in plus and minus
     avg_batch_size = sum(batch_sizes)/(len(batch_sizes) * 1.0)
     # Format timing results with proper units and alignment
-    total_time = sum(batch_times)
-    total_samples = sum(batch_sizes)
-    avg_time_per_element = sum(batch_times)/(len(batch_times) * avg_batch_size)
-    samples_per_second = total_samples/total_time
+    total_time = float(sum(batch_times))
+    total_samples = float(sum(batch_sizes))
+    avg_time_per_element = float(sum(batch_times)/(len(batch_times) * avg_batch_size))
+    samples_per_second = float(total_samples/total_time)
 
     # Convert to appropriate units
     def format_time(t):
@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     print("\n--------------------------------[Timing Results]--------------------------------")
     print(f"Total time:          {format_time(total_time)}")
-    print(f"Total samples:       {total_samples:8,d}")
+    print(f"Total samples:       {int(total_samples):8,d}")
     print(f"Number of batches:   {len(batch_times):8,d}")
     print(f"Avg time/element:    {format_time(avg_time_per_element)}")
     print(f"Throughput:          {samples_per_second:8,.1f} samples/s")
