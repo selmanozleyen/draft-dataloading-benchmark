@@ -22,13 +22,27 @@ python create_data.py --data-path=/Users/selman.ozleyen/projects/draft-dataloadi
 
 To run the simple case
 ```
-❯ python simple_run.py --data-path=/Users/selman.ozleyen/projects/draft-dataloading-benchmark/benchmarks/data/synthetic_data_sparse.zarr
+❯ python simple_run.py --data-path=/Users/selman.ozleyen/projects/draft-dataloading-benchmark/benchmarks/data/synthetic_data_sparse.zarr --batch-size=128
 adata.X shape: (541200, 50)
 adata.X type: <class 'dask.array.core.Array'>
-Average batch size: 124.98845265588915
-Average batch time: 0.00027976460049389143 seconds (+/- 0.0013937197356093348 seconds)
-Average time per element: 2.2383235774917773e-06 seconds
-Total time: 1.2113807201385498 seconds
-Number of iterations: 4330
+
+--------------------------------[Timing Results]--------------------------------
+Total time:              1.64 s
+Total samples:        541,200
+Number of batches:      4,330
+Avg time/element:        3.03 μs
+Throughput:          330,490.9 samples/s
+--------------------------------------------------------------------------------
+❯ python simple_run.py --data-path=/Users/selman.ozleyen/projects/draft-dataloading-benchmark/benchmarks/data/synthetic_data_sparse.zarr --batch-size=128
+adata.X shape: (541200, 50)
+adata.X type: <class 'dask.array.core.Array'>
+
+--------------------------------[Timing Results]--------------------------------
+Total time:              1.17 s
+Total samples:        541,200
+Number of batches:      4,330
+Avg time/element:        2.17 μs
+Throughput:          461,799.7 samples/s
+--------------------------------------------------------------------------------
 ```
 
