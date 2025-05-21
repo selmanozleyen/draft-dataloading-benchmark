@@ -45,3 +45,4 @@ if __name__ == "__main__":
     print(f"Number of samples: {sum(batch_sizes)}")
     print(f"Number of iterations: {len(batch_times)}")
     print(f"Average time per element: {sum(batch_times)/(len(batch_times) * avg_batch_size)} seconds")
+    print(f"Samples per second: {sum(batch_sizes)/sum(batch_times)}")

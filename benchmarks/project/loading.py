@@ -21,16 +21,6 @@ def _combine_chunks(lst, chunk_size):
     return [lst[i : i + chunk_size] for i in range(0, len(lst), chunk_size)]
 
 
-def _yield_samples(x, y, shuffle=True):
-    num_samples = x.shape[0]
-    indices = np.arange(num_samples)
-    if shuffle:
-        np.random.shuffle(indices)  # noqa: NPY002
-
-    for i in indices:
-        yield x[i], y[i]
-
-
 def _yield_chunks_batched(x, y, batch_size, shuffle=True):
     num_samples = x.shape[0]  # for sparse compatibility
     indices = np.arange(num_samples)
@@ -68,16 +58,11 @@ class BatchedZarrDataset(IterableDataset):
         return chunks
 
     def __iter__(self):
-        yield_chunks = (
-            partial(_yield_chunks_batched, batch_size=self.batch_size, shuffle=self.shuffle)
-            if self.batch_size > 1
-            else _yield_samples
-        )
         for chunks in _combine_chunks(self._get_chunks(), self.n_chunks):
             block_idxs, slices = zip(*chunks)
             x = self.adata.X.blocks[list(block_idxs)].compute(scheduler="threads")
             obs = self.adata.obs[self.label_column].iloc[np.r_[slices]].to_numpy()
-            yield from yield_chunks(x, obs)
+            yield from _yield_chunks_batched(x, obs, self.batch_size, self.shuffle)
 
     def __len__(self):
         return self.adata.X.shape[0]
