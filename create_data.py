@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 import anndata as ad
+import scipy.sparse as sp
+import argparse
 
 def create_synthetic_data(
     n_genes=50,
@@ -11,6 +13,7 @@ def create_synthetic_data(
     n_cell_types=30,
     cell_type_embed_dim=50,
     drug_embed_dim=50,
+    sparse=False,
 ):
     """
     Creates a synthetic AnnData object with multiple dosages per drug.
@@ -39,7 +42,6 @@ def create_synthetic_data(
     dict
         Dictionary containing all DataManager parameters
     """
-
     # Create cell type names
     n_batches = n_cell_types
     cell_type_names = [f"cell_line_{chr(97 + i)}" for i in range(n_cell_types)]
@@ -87,7 +89,10 @@ def create_synthetic_data(
                 dosage_list.extend([dosage_value] * cells_per_condition)
 
     # Generate random expression data
-    X = np.random.normal(size=(n_cells, n_genes))
+    if sparse:
+        X = sp.csr_matrix(np.random.normal(size=(n_cells, n_genes)))
+    else:
+        X = np.random.normal(size=(n_cells, n_genes))
 
     # Create observation DataFrame
     obs = pd.DataFrame(
@@ -152,9 +157,13 @@ def create_synthetic_data(
     }
 
 if __name__ == "__main__":
-    cells_per_condition = 200
-    data = create_synthetic_data(cells_per_condition=cells_per_condition)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--data-path", type=str, default="benchmarks/data/synthetic_data.zarr")
+    parser.add_argument("--cells-per-condition", type=int, default=1000)
+    parser.add_argument("--sparse", action="store_true")
+    args = parser.parse_args()
+    cells_per_condition = args.cells_per_condition
+    data = create_synthetic_data(cells_per_condition=cells_per_condition, sparse=args.sparse)
     print(data)
     adata = data["adata"]
-    row_chunks = 5
-    adata.write_zarr("benchmarks/data/synthetic_data.zarr")
+    adata.write_zarr(args.data_path)

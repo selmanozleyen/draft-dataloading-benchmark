@@ -1,5 +1,5 @@
 import time
-from benchmarks.project.loading import read_lazy, ZarrDataset
+from benchmarks.project.loading import read_lazy, BatchedZarrDataset
 from torch.utils.data import DataLoader
 import numpy as np
 import argparse
@@ -12,11 +12,16 @@ if __name__ == "__main__":
     parser.add_argument("--torch", action="store_true")
     parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--num_workers", type=int, default=4)
+    parser.add_argument("--n_chunks", type=int, default=4)
+    parser.add_argument("--shuffle", action="store_true")
+
     args = parser.parse_args()
     data_path = Path(args.data_path)
     assert data_path.exists(), f"Data path {data_path} does not exist"
     adata = read_lazy(data_path)
-    loader = ZarrDataset(adata, "cell_type")
+    print("adata.X shape:", adata.X.shape)
+    print("adata.X type:", type(adata.X))
+    loader = BatchedZarrDataset(adata, "cell_type", args.batch_size, args.n_chunks, args.shuffle)
     if args.torch:
         loader = DataLoader(
             loader,
@@ -30,7 +35,7 @@ if __name__ == "__main__":
     batch_sizes = []
     for x in loader:
         batch_times.append(time.time() - time0)
-        batch_sizes.append(1 if not args.torch else len(x[0])) # also to make sure it is not optimized out
+        batch_sizes.append(x[0].shape[0] if not args.torch else len(x[0])) # also to make sure it is not optimized out
         time0 = time.time()
     # give in plus and minus
     avg_batch_size = sum(batch_sizes)/(len(batch_sizes) * 1.0)
