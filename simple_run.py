@@ -10,9 +10,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--data-path", type=str)
     parser.add_argument("--torch", action="store_true")
-    parser.add_argument("--batch_size", type=int, default=128)
-    parser.add_argument("--num_workers", type=int, default=4)
-    parser.add_argument("--n_chunks", type=int, default=4)
+    parser.add_argument("--batch-size", type=int, default=128)
+    parser.add_argument("--num-workers", type=int, default=4)
+    parser.add_argument("--n-chunks", type=int, default=4)
     parser.add_argument("--shuffle", action="store_true")
 
     args = parser.parse_args()
