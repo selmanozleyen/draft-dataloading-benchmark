@@ -161,9 +161,10 @@ if __name__ == "__main__":
     parser.add_argument("--data-path", type=str, default="benchmarks/data/synthetic_data.zarr")
     parser.add_argument("--cells-per-condition", type=int, default=1000)
     parser.add_argument("--sparse", action="store_true")
+    parser.add_argument("--chunk-size", type=int, default=4096)
     args = parser.parse_args()
     cells_per_condition = args.cells_per_condition
     data = create_synthetic_data(cells_per_condition=cells_per_condition, sparse=args.sparse)
     print(data)
     adata = data["adata"]
-    adata.write_zarr(args.data_path)
+    adata.write_zarr(args.data_path, chunks=(args.chunk_size, adata.X.shape[1]))

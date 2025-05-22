@@ -1,0 +1,30 @@
+import anndata as ad
+import zarr
+import scipy.sparse as sp
+from pathlib import Path
+
+def convert_format(data_path, output_path, chunk_size, sparse):
+    data_path = Path(data_path)
+    output_path = Path(output_path)
+    assert data_path.exists()
+    assert output_path.parent.exists()
+    assert data_path.suffix == ".h5ad" or data_path.suffix == ".zarr"
+    assert output_path.suffix == ".zarr" or output_path.suffix == ".h5ad"
+
+    if data_path.suffix == ".h5ad":
+        adata = ad.read_h5ad(data_path)
+    else:
+        group = zarr.open(data_path)
+        adata = ad.read_zarr(group)
+    if sparse:
+        adata.X = sp.csr_matrix(adata.X)
+    else:
+        adata.X = adata.X.toarray() if sp.issparse(adata.X) else adata.X
+    print("Read adata:", adata)
+
+    if output_path.suffix == ".h5ad":
+        adata.write_h5ad(output_path)
+    else:
+        chunks = (chunk_size, adata.X.shape[1])
+        adata.write_zarr(output_path, chunks=chunks)
+    print("Wrote adata to", output_path)
