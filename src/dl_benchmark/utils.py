@@ -3,13 +3,10 @@ import zarr
 import scipy.sparse as sp
 from pathlib import Path
 
-def convert_format(data_path, output_path, chunk_size):
+def convert_format(data_path, chunk_size):
     data_path = Path(data_path)
-    output_path = Path(output_path)
     assert data_path.exists()
-    assert output_path.parent.exists()
     assert data_path.suffix == ".h5ad" or data_path.suffix == ".zarr"
-    assert output_path.suffix == ".zarr" or output_path.suffix == ".h5ad"
 
     if data_path.suffix == ".h5ad":
         adata = ad.read_h5ad(data_path, backed="r")
@@ -21,9 +18,10 @@ def convert_format(data_path, output_path, chunk_size):
         )
     print("Read adata:", adata)
 
-    if output_path.suffix == ".h5ad":
+    chunks = (chunk_size, adata.X.shape[1])
+    output_path = Path(data_path.parent, data_path.stem + ".zarr")
+    if data_path.suffix == ".h5ad":
         adata.write_h5ad(output_path)
     else:
-        chunks = (chunk_size, adata.X.shape[1])
         adata.write_zarr(output_path, chunks=chunks)
     print("Wrote adata to", output_path)
