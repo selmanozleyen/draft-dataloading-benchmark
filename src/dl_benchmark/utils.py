@@ -3,7 +3,7 @@ import zarr
 import scipy.sparse as sp
 from pathlib import Path
 
-def convert_format(data_path, output_path, chunk_size, sparse):
+def convert_format(data_path, output_path, chunk_size):
     data_path = Path(data_path)
     output_path = Path(output_path)
     assert data_path.exists()
@@ -16,10 +16,6 @@ def convert_format(data_path, output_path, chunk_size, sparse):
     else:
         group = zarr.open(data_path)
         adata = ad.read_zarr(group)
-    if sparse:
-        adata.X = sp.csr_matrix(adata.X)
-    else:
-        adata.X = adata.X.toarray() if sp.issparse(adata.X) else adata.X
     print("Read adata:", adata)
 
     if output_path.suffix == ".h5ad":
