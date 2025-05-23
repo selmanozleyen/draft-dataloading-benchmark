@@ -12,10 +12,13 @@ def convert_format(data_path, output_path, chunk_size):
     assert output_path.suffix == ".zarr" or output_path.suffix == ".h5ad"
 
     if data_path.suffix == ".h5ad":
-        adata = ad.read_h5ad(data_path)
+        adata = ad.read_h5ad(data_path, backed="r")
     else:
-        group = zarr.open(data_path)
-        adata = ad.read_zarr(group)
+        group = zarr.open(data_path, mode="r")
+        adata = ad.AnnData(
+            X=ad.experimental.read_elem_lazy(group["X"]),
+            obs=ad.io.read_elem(group["obs"]),
+        )
     print("Read adata:", adata)
 
     if output_path.suffix == ".h5ad":
