@@ -20,6 +20,8 @@ if __name__ == "__main__":
     assert data_path.exists(), f"Data path {data_path} does not exist"
     adata = read_lazy(data_path)
     print("adata.X shape:", adata.X.shape)
+    # print dask meta
+    print("adata.X meta:", adata.X._meta)
     print("adata.X type:", type(adata.X))
     loader = BatchedZarrDataset(adata, "cell_type", args.batch_size, args.n_chunks, args.shuffle)
     if args.torch:

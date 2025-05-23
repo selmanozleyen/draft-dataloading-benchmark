@@ -19,8 +19,8 @@ def convert_format(data_path, chunk_size):
     print("Read adata:", adata)
 
     chunks = (chunk_size, adata.X.shape[1])
-    output_path = Path(data_path.parent, data_path.stem + ".zarr")
-    if data_path.suffix == ".h5ad":
+    output_path = Path(data_path.parent, data_path.stem + ".zarr" if data_path.suffix == ".h5ad" else data_path.with_suffix(".zarr"))
+    if output_path.suffix == ".h5ad":
         adata.write_h5ad(output_path)
     else:
         adata.write_zarr(output_path, chunks=chunks)
